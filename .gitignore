@@ -1,0 +1,80 @@
+# Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.slnx.docstates
+
+# Build output - klasicni Win32/x64 build folderji
+[Dd]ebug/
+[Rr]elease/
+[Xx]64/
+[Xx]86/
+[Ww][Ii][Nn]32/
+[Bb]uild/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# C++ build artifacts
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.lastbuildstate
+*.unsuccessfulbuild
+*.cache
+*.iobj
+*.ipdb
+*.exp
+*.lib
+*.dll
+
+# Ne ignoriraj knjiznicnih .lib datotek v third_party
+!third_party/**/*.lib
+!third_party/**/*.dll
+
+# IntelliSense
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.ipch
+ipch/
+
+# Resharper / Rider
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Visual Studio profiler / analyzer
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# CMake (ce ga kasneje dodava)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CMakeUserPresets.json
+
+# Operacijski sistemi
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Output za simulacijo - slike, CSV pot fotona, ipd.
+output/
+*.ppm
+*.png
+*.jpg
+*.csv
+
+# Ce bos v output map zelel ohraniti README ali .gitkeep:
+!output/.gitkeep
+!output/README.md
