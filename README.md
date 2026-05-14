@@ -1,1 +1,1 @@
-![Photon trajectory](https://github.com/IsxImattI/gargantua-core/raw/feature/rk4-integrator/output/gargantua_deflection_b5.74.png)
+![Photon trajectory]([https://github.com/IsxImattI/gargantua-core/raw/feature/rk4-integrator/output/gargantua_deflection_b5.74.png](https://github.com/IsxImattI/gargantua-core/blob/main/output/gargantua_deflection_b5.74.png))
