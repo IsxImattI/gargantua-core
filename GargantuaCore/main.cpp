@@ -1,16 +1,35 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include "Photon.h"
 
 int main() {
-    Eigen::Vector3d a(1.0, 2.0, 3.0);
-    Eigen::Vector3d b(4.0, 5.0, 6.0);
+    // Place the BH at the origin with mass M = 1 (geometric units).
+    // Camera sits at distance 20M along the -z axis, looking toward the BH.
+    const Eigen::Vector3d cameraPos(0.0, 0.0, -20.0);
 
-    Eigen::Vector3d sum = a + b;
-    double dot = a.dot(b);
+    // Test photon 1: fired straight at the BH along +z.
+    // For a head-on shot through the center, |L| = 0 (radial geodesic).
+    const Eigen::Vector3d directionRadial(0.0, 0.0, 1.0);
+    const Photon photonRadial = Photon::Create(cameraPos, directionRadial);
 
-    std::cout << "Eigen test\n";
-    std::cout << "a + b = " << sum.transpose() << "\n";
-    std::cout << "a . b = " << dot << "\n";
+    // Test photon 2: fired with a small tangential offset so L is nonzero.
+    // Direction (0.1, 0, 1) gives a small x-component to the velocity.
+    const Eigen::Vector3d directionGrazing(0.1, 0.0, 1.0);
+    const Photon photonGrazing = Photon::Create(cameraPos, directionGrazing);
+
+    std::cout << "=== Photon smoke test ===\n\n";
+
+    std::cout << "Radial photon (aimed straight at the BH):\n";
+    std::cout << "  position = " << photonRadial.position.transpose() << "\n";
+    std::cout << "  velocity = " << photonRadial.velocity.transpose() << "\n";
+    std::cout << "  |v|      = " << photonRadial.velocity.norm() << "\n";
+    std::cout << "  L^2      = " << photonRadial.L_squared << "\n\n";
+
+    std::cout << "Grazing photon (small tangential offset):\n";
+    std::cout << "  position = " << photonGrazing.position.transpose() << "\n";
+    std::cout << "  velocity = " << photonGrazing.velocity.transpose() << "\n";
+    std::cout << "  |v|      = " << photonGrazing.velocity.norm() << "\n";
+    std::cout << "  L^2      = " << photonGrazing.L_squared << "\n";
 
     return 0;
 }
