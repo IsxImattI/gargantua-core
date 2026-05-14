@@ -69,12 +69,8 @@ Desktop.ini
 .DS_Store
 
 # Output za simulacijo - slike, CSV pot fotona, ipd.
-output/
-*.ppm
-*.png
-*.jpg
-*.csv
-
-# Ce bos v output map zelel ohraniti README ali .gitkeep:
+output/*
 !output/.gitkeep
 !output/README.md
+!output/gargantua_deflection_b5.74.png
+!output/photon_path.csv

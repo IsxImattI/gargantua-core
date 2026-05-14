@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="GargantuaCore/GargantuaCore.vcxproj" />
+  <Project Path="GargantuaCore/GargantuaCore.vcxproj" Id="e3c6f308-3aaf-473d-a299-0aef4c97e90c" />
 </Solution>
