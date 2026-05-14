@@ -1,35 +1,77 @@
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <Eigen/Dense>
 #include "Photon.h"
+#include "Integrator.h"
 
 int main() {
-    // Place the BH at the origin with mass M = 1 (geometric units).
-    // Camera sits at distance 20M along the -z axis, looking toward the BH.
-    const Eigen::Vector3d cameraPos(0.0, 0.0, -20.0);
+    // Simulation parameters
+    const double M = 1.0;              // BH mass (geometric units)
+    const double dLambda = 0.05;       // integration step
+    const int    maxSteps = 5000;      // safety cap
+    const double escapeRadius = 50.0;  // photon "escaped" beyond this
+    const double horizonRadius = 2.0 * M;  // Schwarzschild radius
 
-    // Test photon 1: fired straight at the BH along +z.
-    // For a head-on shot through the center, |L| = 0 (radial geodesic).
-    const Eigen::Vector3d directionRadial(0.0, 0.0, 1.0);
-    const Photon photonRadial = Photon::Create(cameraPos, directionRadial);
+    // Initial conditions: camera at (0, 0, -20), photon fired toward BH
+    // with a tangential offset to get a nonzero impact parameter.
+    //
+    // Try changing the x-component of the direction:
+    //   0.1  -> small offset, photon plunges into BH
+    //   0.3  -> larger offset, photon should escape with some deflection
+    //   0.27 -> near-critical, photon orbits the BH multiple times
+    const Eigen::Vector3d initialPos(0.0, 0.0, -20.0);
+    const Eigen::Vector3d initialDir(0.3, 0.0, 1.0);
 
-    // Test photon 2: fired with a small tangential offset so L is nonzero.
-    // Direction (0.1, 0, 1) gives a small x-component to the velocity.
-    const Eigen::Vector3d directionGrazing(0.1, 0.0, 1.0);
-    const Photon photonGrazing = Photon::Create(cameraPos, directionGrazing);
+    Photon photon = Photon::Create(initialPos, initialDir);
 
-    std::cout << "=== Photon smoke test ===\n\n";
+    std::cout << "Initial state:\n";
+    std::cout << "  position = " << photon.position.transpose() << "\n";
+    std::cout << "  velocity = " << photon.velocity.transpose() << "\n";
+    std::cout << "  L^2      = " << photon.L_squared << "\n";
+    std::cout << "  impact b = " << std::sqrt(photon.L_squared) << " M\n";
+    std::cout << "  b_crit   = " << 3.0 * std::sqrt(3.0) * M << " M\n\n";
 
-    std::cout << "Radial photon (aimed straight at the BH):\n";
-    std::cout << "  position = " << photonRadial.position.transpose() << "\n";
-    std::cout << "  velocity = " << photonRadial.velocity.transpose() << "\n";
-    std::cout << "  |v|      = " << photonRadial.velocity.norm() << "\n";
-    std::cout << "  L^2      = " << photonRadial.L_squared << "\n\n";
+    // Open CSV for trajectory output
+    std::ofstream csv("photon_path.csv");
+    csv << "step,x,y,z,r\n";
+    csv << std::fixed << std::setprecision(6);
 
-    std::cout << "Grazing photon (small tangential offset):\n";
-    std::cout << "  position = " << photonGrazing.position.transpose() << "\n";
-    std::cout << "  velocity = " << photonGrazing.velocity.transpose() << "\n";
-    std::cout << "  |v|      = " << photonGrazing.velocity.norm() << "\n";
-    std::cout << "  L^2      = " << photonGrazing.L_squared << "\n";
+    // Main integration loop
+    int step = 0;
+    for (; step < maxSteps; ++step) {
+        const double r = photon.position.norm();
+        csv << step << ","
+            << photon.position.x() << ","
+            << photon.position.y() << ","
+            << photon.position.z() << ","
+            << r << "\n";
+
+        // Termination conditions
+        if (r < horizonRadius) {
+            std::cout << "Photon crossed event horizon at step " << step
+                << ", r = " << r << "\n";
+            break;
+        }
+        if (r > escapeRadius) {
+            std::cout << "Photon escaped at step " << step
+                << ", r = " << r << "\n";
+            break;
+        }
+
+        Integrator::StepRK4(photon, M, dLambda);
+    }
+
+    if (step == maxSteps) {
+        std::cout << "Reached step cap without termination, r = "
+            << photon.position.norm() << "\n";
+    }
+
+    std::cout << "\nFinal state:\n";
+    std::cout << "  position = " << photon.position.transpose() << "\n";
+    std::cout << "  velocity = " << photon.velocity.transpose() << "\n";
+    std::cout << "  steps    = " << step << "\n";
+    std::cout << "  CSV written to photon_path.csv\n";
 
     return 0;
 }
